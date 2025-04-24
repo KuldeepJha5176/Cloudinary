@@ -14,9 +14,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  id        String   @id @default(uuid())
-}
+
 
 model video {
   id        String   @id @default(uuid())
@@ -25,7 +23,7 @@ model video {
   publicId  String
   originalSize String
   compressedSize String
-  duration  String
+  duration  Float
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

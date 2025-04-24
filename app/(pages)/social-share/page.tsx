@@ -1,4 +1,7 @@
-import React from 'react'
+"use client"
+import React , {useState,useEffect,useRef} from 'react';
+import { CldImage } from 'next-cloudinary';
+
 
 function SocialShare() {
   return (

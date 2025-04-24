@@ -117,10 +117,6 @@ exports.Prisma.TransactionIsolationLevel = makeStrictEnum({
   Serializable: 'Serializable'
 });
 
-exports.Prisma.UserScalarFieldEnum = {
-  id: 'id'
-};
-
 exports.Prisma.VideoScalarFieldEnum = {
   id: 'id',
   title: 'title',
@@ -150,7 +146,6 @@ exports.Prisma.NullsOrder = {
 
 
 exports.Prisma.ModelName = {
-  User: 'User',
   video: 'video'
 };
 
