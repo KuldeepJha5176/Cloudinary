@@ -132,7 +132,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\91730\\Desktop\\Cohort\\cloudinary-saas\\app\\generated\\prisma",
+      "value": "/mnt/c/Users/91730/Desktop/Cohort/cloudinary-saas/app/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -141,12 +141,12 @@ const config = {
     "binaryTargets": [
       {
         "fromEnvVar": null,
-        "value": "windows",
+        "value": "debian-openssl-3.0.x",
         "native": true
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\91730\\Desktop\\Cohort\\cloudinary-saas\\prisma\\schema.prisma",
+    "sourceFilePath": "/mnt/c/Users/91730/Desktop/Cohort/cloudinary-saas/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
