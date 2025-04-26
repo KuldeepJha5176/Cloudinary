@@ -1,8 +1,11 @@
 
+"use client";
 import { Navbar } from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { Camera, Video, ArrowRight, Check } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { SignInButton } from "@clerk/nextjs";
+import { Sign } from "crypto";
 
 const Index = () => {
   return (
@@ -23,9 +26,11 @@ const Index = () => {
             Save space without compromising quality.
           </p>
           <div className="flex flex-wrap justify-center gap-4 animate-fade-up animation-delay-200">
+            <SignInButton mode="modal">
             <Button size="lg" className="rounded-full gap-2">
               Start Processing <ArrowRight className="h-4 w-4" />
             </Button>
+            </SignInButton>
             <Button size="lg" variant="outline" className="rounded-full">
               Learn More
             </Button>
@@ -124,9 +129,11 @@ const Index = () => {
           <p className="text-muted-foreground max-w-2xl mx-auto mb-8">
             Join thousands of users who are already saving storage space and improving their media workflow.
           </p>
+          <SignInButton mode="modal" >
           <Button size="lg" className="rounded-full">
             Get Started Now
           </Button>
+          </SignInButton>
         </div>
       </section>
 

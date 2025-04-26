@@ -1,142 +1,228 @@
 "use client";
-
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useClerk, useUser } from "@clerk/nextjs";
 import {
-  LogOutIcon,
-  MenuIcon,
-  LayoutDashboardIcon,
-  Share2Icon,
-  UploadIcon,
-  ImageIcon,
+  LogOut,
+  Menu,
+  Home,
+  Share2,
+  Upload,
+  Film,
+  ChevronDown,
+  User,
+  Settings,
 } from "lucide-react";
+import { ThemeProvider } from "next-themes";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const sidebarItems = [
-  { href: "/home", icon: LayoutDashboardIcon, label: "Home Page" },
-  { href: "/social-share", icon: Share2Icon, label: "Social Share" },
-  { href: "/video-upload", icon: UploadIcon, label: "Video Upload" },
+  { href: "/home", icon: Home, label: "Home Page" },
+  { href: "/social-share", icon: Share2, label: "Social Share" },
+  { href: "/video-upload", icon: Upload, label: "Video Upload" },
 ];
+
+function AppLayoutContent({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
+  const { signOut } = useClerk();
+  const { user } = useUser();
+  
+  const handleLogoClick = () => {
+    router.push("/");
+  };
+  
+  const handleSignOut = async () => {
+    await signOut();
+  };
+  
+  const handleNavigateToProfile = () => {
+    router.push("/profile");
+    setUserMenuOpen(false);
+  };
+  
+  const handleNavigateToSettings = () => {
+    router.push("/settings");
+    setUserMenuOpen(false);
+  };
+
+  return (
+    <div className="min-h-screen dark:bg-slate-900 bg-slate-50 transition-colors duration-200">
+      {/* Navbar */}
+      <header className="sticky top-0 z-30 w-full bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 transition-colors duration-200">
+        <div className="px-4 sm:px-6 lg:px-8">
+          <div className="flex h-16 items-center justify-between">
+            <div className="flex items-center">
+              <button
+                type="button"
+                className="inline-flex items-center justify-center rounded-md p-2 text-slate-700 dark:text-slate-200 lg:hidden"
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+              >
+                <Menu className="h-6 w-6" />
+              </button>
+              <Link 
+                href="/" 
+                className="flex items-center space-x-2 ml-2 lg:ml-0"
+                onClick={handleLogoClick}
+              >
+                <Film className="h-8 w-8 text-blue-600 dark:text-indigo-400" />
+                <span className="text-xl font-bold text-slate-900 dark:text-white">Cloudinary Showcase</span>
+              </Link>
+            </div>
+            
+            <div className="flex items-center space-x-4">
+              <ThemeToggle />
+              
+              {user && (
+                <div className="relative">
+                  <button
+                    type="button"
+                    className="flex items-center space-x-3 text-sm focus:outline-none"
+                    onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  >
+                    <div className="hidden md:block">
+                      <p className="text-sm font-medium text-slate-700 dark:text-slate-200">
+                        {user.username || user.emailAddresses[0].emailAddress}
+                      </p>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="h-8 w-8 rounded-full overflow-hidden bg-slate-100">
+                        <img
+                          src={user.imageUrl}
+                          alt="User"
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                      <ChevronDown className="ml-1 h-4 w-4 text-slate-400" />
+                    </div>
+                  </button>
+                  
+                  {userMenuOpen && (
+                    <div className="absolute right-0 mt-2 w-48 origin-top-right rounded-md bg-white dark:bg-slate-800 py-1 shadow-lg ring-1 ring-black ring-opacity-5 dark:ring-slate-700 focus:outline-none">
+                      <div className="px-4 py-3 border-b border-slate-200 dark:border-slate-700">
+                        <p className="text-sm font-semibold text-slate-900 dark:text-white">
+                          {user.fullName || user.username}
+                        </p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 truncate">
+                          {user.emailAddresses[0].emailAddress}
+                        </p>
+                      </div>
+                      
+                      <button
+                        onClick={handleNavigateToProfile}
+                        className="flex w-full items-center px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700"
+                      >
+                        <User className="mr-2 h-4 w-4" />
+                        Your Profile
+                      </button>
+                      
+                      <button
+                        onClick={handleNavigateToSettings}
+                        className="flex w-full items-center px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700"
+                      >
+                        <Settings className="mr-2 h-4 w-4" />
+                        Account Settings
+                      </button>
+                      
+                      <div className="border-t border-slate-200 dark:border-slate-700" />
+                      
+                      <button
+                        onClick={handleSignOut}
+                        className="flex w-full items-center px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700"
+                      >
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Sign Out
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </header>
+      <div className="flex h-[calc(100vh-64px)]">
+        {/* Sidebar overlay */}
+        {sidebarOpen && (
+          <div 
+            className="fixed inset-0 z-20 bg-black bg-opacity-50 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+        
+        {/* Sidebar */}
+        <aside
+          className={`fixed top-16 left-0 z-20 w-64 h-[calc(100vh-64px)] bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 ${
+            sidebarOpen ? "translate-x-0" : "-translate-x-full"
+          }`}
+        >
+          <div className="h-full flex flex-col">
+            <div className="flex-1 overflow-y-auto py-5 px-3">
+              <nav className="space-y-1">
+                {sidebarItems.map((item) => {
+                  const isActive = pathname === item.href;
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                        isActive
+                          ? "bg-blue-100 dark:bg-indigo-900/60 text-blue-700 dark:text-indigo-200"
+                          : "text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700/60"
+                      }`}
+                      onClick={() => setSidebarOpen(false)}
+                    >
+                      <item.icon
+                        className={`mr-3 h-5 w-5 ${
+                          isActive ? "text-blue-600 dark:text-indigo-400" : "text-slate-400 dark:text-slate-500"
+                        }`}
+                      />
+                      <span>{item.label}</span>
+                    </Link>
+                  );
+                })}
+              </nav>
+            </div>
+            
+            {user && (
+              <div className="border-t border-slate-200 dark:border-slate-700 p-4">
+                <button
+                  onClick={handleSignOut}
+                  className="flex items-center justify-center w-full px-3 py-2 text-sm font-medium text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900/20 rounded-md hover:bg-red-100 dark:hover:bg-red-900/40"
+                >
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sign Out
+                </button>
+              </div>
+            )}
+          </div>
+        </aside>
+        {/* Main content */}
+        <main className="flex-1 overflow-y-auto transition-colors duration-200 dark:bg-slate-900">
+          <div className="py-6">
+            {children}
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}
 
 export default function AppLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const pathname = usePathname();
-  const router = useRouter();
-  const { signOut } = useClerk();
-  const { user } = useUser();
-
-  const handleLogoClick = () => {
-    router.push("/");
-  };
-
-  const handleSignOut = async () => {
-    await signOut();
-  };
-
   return (
-    <div className="drawer lg:drawer-open">
-      <input
-        id="sidebar-drawer"
-        type="checkbox"
-        className="drawer-toggle"
-        checked={sidebarOpen}
-        onChange={() => setSidebarOpen(!sidebarOpen)}
-      />
-      <div className="drawer-content flex flex-col">
-        {/* Navbar */}
-        <header className="w-full bg-base-200">
-          <div className="navbar max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex-none lg:hidden">
-              <label
-                htmlFor="sidebar-drawer"
-                className="btn btn-square btn-ghost drawer-button"
-              >
-                <MenuIcon />
-              </label>
-            </div>
-            <div className="flex-1">
-              <Link href="/" onClick={handleLogoClick}>
-                <div className="btn btn-ghost normal-case text-2xl font-bold tracking-tight cursor-pointer">
-                  Cloudinary Showcase
-                </div>
-              </Link>
-            </div>
-            <div className="flex-none flex items-center space-x-4">
-              {user && (
-                <>
-                  <div className="avatar">
-                    <div className="w-8 h-8 rounded-full">
-                      <img
-                        src={user.imageUrl}
-                        alt={
-                          user.username || user.emailAddresses[0].emailAddress
-                        }
-                      />
-                    </div>
-                  </div>
-                  <span className="text-sm truncate max-w-xs lg:max-w-md">
-                    {user.username || user.emailAddresses[0].emailAddress}
-                  </span>
-                  <button
-                    onClick={handleSignOut}
-                    className="btn btn-ghost btn-circle"
-                  >
-                    <LogOutIcon className="h-6 w-6" />
-                  </button>
-                </>
-              )}
-            </div>
-          </div>
-        </header>
-        {/* Page content */}
-        <main className="flex-grow">
-          <div className="max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 my-8">
-            {children}
-          </div>
-        </main>
-      </div>
-      <div className="drawer-side">
-        <label htmlFor="sidebar-drawer" className="drawer-overlay"></label>
-        <aside className="bg-base-200 w-64 h-full flex flex-col">
-          <div className="flex items-center justify-center py-4">
-            <ImageIcon className="w-10 h-10 text-primary" />
-          </div>
-          <ul className="menu p-4 w-full text-base-content flex-grow">
-            {sidebarItems.map((item) => (
-              <li key={item.href} className="mb-2">
-                <Link
-                  href={item.href}
-                  className={`flex items-center space-x-4 px-4 py-2 rounded-lg ${
-                    pathname === item.href
-                      ? "bg-primary text-white"
-                      : "hover:bg-base-300"
-                  }`}
-                  onClick={() => setSidebarOpen(false)}
-                >
-                  <item.icon className="w-6 h-6" />
-                  <span>{item.label}</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-          {user && (
-            <div className="p-4">
-              <button
-                onClick={handleSignOut}
-                className="btn btn-outline btn-error w-full"
-              >
-                <LogOutIcon className="mr-2 h-5 w-5" />
-                Sign Out
-              </button>
-            </div>
-          )}
-        </aside>
-      </div>
-    </div>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+      <AppLayoutContent>{children}</AppLayoutContent>
+    </ThemeProvider>
   );
 }

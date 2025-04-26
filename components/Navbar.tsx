@@ -1,6 +1,11 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import { Sun, Moon } from "lucide-react";
-import { useTheme } from "../hooks/useTheme";
+import { useTheme } from "@/hooks/useTheme";
+import { toast } from "sonner";
+import { Sign } from "crypto";
+
+import { SignIn, SignInButton } from "@clerk/nextjs";
 
 export const Navbar = () => {
   const { theme, toggleTheme } = useTheme();
@@ -17,12 +22,28 @@ export const Navbar = () => {
           <Button 
             variant="ghost" 
             size="icon" 
-            onClick={toggleTheme}
+            onClick={() => {
+              toggleTheme();
+              toast(`Switched to ${theme === 'light' ? 'dark' : 'light'} mode`, {
+                description: `Theme preference updated.`,
+                position: "bottom-right",
+              });
+            }}
             className="rounded-full hover:bg-muted"
           >
             {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
           </Button>
-          <Button variant="default" className="rounded-full">Get Started</Button>
+          <SignInButton mode="modal">
+          <Button 
+            variant="default" 
+            className="rounded-full"
+            
+          >
+            Get Started
+          </Button>
+          </SignInButton>
+
+          
         </div>
       </div>
     </nav>
