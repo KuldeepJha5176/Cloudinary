@@ -30,24 +30,35 @@ export default function SocialShare() {
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
+    
     setIsUploading(true)
+    
+    // Add client-side validation
+    if (file.size > 10 * 1024 * 1024) {
+      alert("File is too large (max 10MB)")
+      setIsUploading(false)
+      return
+    }
+    
     const formData = new FormData()
     formData.append("file", file)
-
+    
     try {
       const response = await fetch("/api/image-upload", {
         method: "POST",
         body: formData,
       })
-
-      if (!response.ok)
-        throw new Error("Failed to upload image")
-
+      
       const data = await response.json()
+      
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to upload image")
+      }
+      
       setUploadedImage(data.publicId)
     } catch (error) {
-      console.log(error)
-      alert("Failed to upload image")
+      console.error("Upload error:", error)
+      alert(error instanceof Error ? error.message : "Failed to upload image")
     } finally {
       setIsUploading(false)
     }
